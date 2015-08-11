@@ -35,13 +35,13 @@ public class AccessTokenController {
     //-- Error handler
     @ResponseStatus(value= HttpStatus.NOT_FOUND)
     @ExceptionHandler(EmptyResultDataAccessException.class)
-    public void notFound (){
+    public void notFound (){    // NOSONAR - Empty function
 
     }
 
     @ResponseStatus(value= HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AccessTokenExpiredException.class)
-    public void expired (){
+    public void expired (){    // NOSONAR - Empty function
 
     }
 }

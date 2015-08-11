@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Api(basePath = "/access_token", value = "AccessToken", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequestMapping(value="/access_token", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(basePath = "/api/access_token", value = "AccessToken", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value="/api/access_token", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccessTokenController {
     //-- Attribute
     @Autowired

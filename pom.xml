@@ -45,8 +45,10 @@
                             <url>jdbc:mysql://localhost:3306</url>
                             <driver>com.mysql.jdbc.Driver</driver>
                             <username>root</username>
-                            <sqlCommand>DROP DATABASE IF EXISTS auth_db;
-                                CREATE DATABASE auth_db;</sqlCommand>
+                            <sqlCommand>
+                              DROP DATABASE IF EXISTS auth_db;
+                              CREATE DATABASE auth_db;
+                            </sqlCommand>
                         </configuration>
                     </execution>
                 </executions>

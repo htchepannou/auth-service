@@ -1,17 +1,49 @@
 package com.tchepannou.auth.config;
 
+import com.tchepannou.auth.service.AccessTokenService;
+import com.tchepannou.auth.service.impl.ISAccessTokenService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.tchepannou.auth.service.GreetingService;
-import com.tchepannou.auth.service.impl.GreetingServiceImpl;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-/**
- * Declare your services here!
- */
+import javax.sql.DataSource;
+
 @Configuration
 public class AppConfig {
+    @Value("${database.driver}")
+    private String driver;
+
+    @Value ("${database.url}")
+    private String url;
+
+    @Value ("${database.username}")
+    private String username;
+
+    @Value ("${database.password}")
+    private String password;
+
+
+    //-- Beans
     @Bean
-    GreetingService greetingService (){
-        return new GreetingServiceImpl();
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+
+    @Bean
+    public DataSource dataSource (){
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setDriverClassName(driver);
+        ds.setUrl(url);
+        return ds;
+    }
+
+    @Bean
+    public AccessTokenService accessTokenService(){
+        return new ISAccessTokenService();
     }
 }

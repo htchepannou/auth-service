@@ -40,13 +40,18 @@ public class SwaggerConfig {
     @Autowired
     public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
         this.springSwaggerConfig = springSwaggerConfig;
+
+        /* remove all default response code */
+        springSwaggerConfig.defaultResponseMessages().values().stream().forEach(list -> list.clear());
     }
 
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
         return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
                 .apiInfo(apiInfo())
-                .includePatterns("/api.*");
+                .includePatterns("/api.*")
+
+        ;
     }
 
     private ApiInfo apiInfo() {

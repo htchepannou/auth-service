@@ -6,6 +6,8 @@ import com.tchepannou.auth.rr.AccessTokenResponse;
 import com.tchepannou.auth.service.AccessTokenService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,12 @@ public class AccessTokenController {
 
     //-- REST methods
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
-    @ApiOperation("Returns access token")
+    @ApiOperation(value="Get AccessToken", notes="Returns an access token by it's ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
+            @ApiResponse(code = 404, message = "Access token not found"),
+            @ApiResponse(code = 401, message = "Access token has expired")
+    })
     public AccessTokenResponse get (@PathVariable("id") long id) throws AccessTokenException{
         return service.findById(id);
     }

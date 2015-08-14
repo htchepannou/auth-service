@@ -20,11 +20,11 @@ public class ISAccessTokenService implements AccessTokenService {
 
     //-- AccessTokenService overrides
     @Override
-    public AccessTokenResponse findById(long id) throws AccessTokenException{
+    public AccessTokenResponse findById(String id) throws AccessTokenException{
         final String sql = "SELECT * FROM login WHERE login_id=?";
         AccessToken token = new JdbcTemplate(dataSource).queryForObject(
                 sql,
-                new Object[]{id},
+                new Object[]{Long.parseLong(id)},
                 getRowMapper()
         );
         if (token.hasExpired()){
@@ -39,7 +39,7 @@ public class ISAccessTokenService implements AccessTokenService {
         AccessTokenResponse response = new AccessTokenResponse();
         response.setCreated(token.getCreated());
         response.setUserId(token.getUserId());
-        response.setId(token.getId());
+        response.setId(String.valueOf(token.getId()));
 
         return response;
     }

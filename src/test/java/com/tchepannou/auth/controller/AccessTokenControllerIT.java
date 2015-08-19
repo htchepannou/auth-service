@@ -33,7 +33,7 @@ public class AccessTokenControllerIT {
     public void test_NotFound(){
         // @formatter:off
         when()
-            .get("/api/access_token/999")
+            .get("/v1/access_token/999")
         .then()
             .statusCode(HttpStatus.SC_NOT_FOUND)
             .log()
@@ -46,7 +46,7 @@ public class AccessTokenControllerIT {
     public void test_Inactive(){
         // @formatter:off
         when()
-            .get("/auth/v1/access_token/{id}", "100")
+            .get("/v1/access_token/{id}", "100")
         .then()
             .statusCode(HttpStatus.SC_UNAUTHORIZED)
             .log()
@@ -59,7 +59,7 @@ public class AccessTokenControllerIT {
     public void test_LoggedOut(){
         // @formatter:off
         when()
-            .get("/auth/v1/access_token/101")
+            .get("/v1/access_token/101")
         .then()
             .statusCode(HttpStatus.SC_UNAUTHORIZED)
             .log()
@@ -72,7 +72,7 @@ public class AccessTokenControllerIT {
     public void test_get(){
         // @formatter:off
         when()
-            .get("/auth/v1/access_token/200")
+            .get("/v1/access_token/200")
         .then()
             .statusCode(HttpStatus.SC_OK)
             .log()

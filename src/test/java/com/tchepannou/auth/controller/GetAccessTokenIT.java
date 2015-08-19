@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 @SpringApplicationConfiguration(classes = Starter.class)
 @WebIntegrationTest
 @Sql({"/db/clean.sql", "/db/login.sql"})
-public class AccessTokenControllerIT {
+public class GetAccessTokenIT {
     @Value("${server.port}")
     private int port;
 
@@ -30,7 +30,7 @@ public class AccessTokenControllerIT {
     }
 
     @Test
-    public void test_NotFound(){
+    public void should_return_404_when_not_found(){
         // @formatter:off
         when()
             .get("/v1/access_token/999")
@@ -43,7 +43,7 @@ public class AccessTokenControllerIT {
     }
 
     @Test
-    public void test_Inactive(){
+    public void should_return_401_when_inactive(){
         // @formatter:off
         when()
             .get("/v1/access_token/{id}", "100")
@@ -56,7 +56,7 @@ public class AccessTokenControllerIT {
     }
 
     @Test
-    public void test_LoggedOut(){
+    public void should_return_401_when_logged_out(){
         // @formatter:off
         when()
             .get("/v1/access_token/101")
@@ -69,7 +69,7 @@ public class AccessTokenControllerIT {
     }
 
     @Test
-    public void test_get(){
+    public void should_return_access_token(){
         // @formatter:off
         when()
             .get("/v1/access_token/200")

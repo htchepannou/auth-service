@@ -1,4 +1,4 @@
-package com.tchepannou.auth.service.impl;
+package com.tchepannou.auth.service.is;
 
 import com.tchepannou.auth.domain.AccessToken;
 import com.tchepannou.auth.exception.AccessTokenException;

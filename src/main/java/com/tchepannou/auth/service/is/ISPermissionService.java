@@ -20,7 +20,7 @@ public class ISPermissionService implements PermissionService {
         response.setSpaceId(spaceId);
         response.setApplication(app);
 
-        final String sql = "SELECT p.perm_value\n"
+        final String sql = "SELECT perm_value\n"
                 + "FROM permission P \n"
                 + "\tJOIN application A ON P.perm_app_fk=A.app_id\n"
                 + "\tJOIN prel R ON P.perm_role_fk=R.prel_qualifier\n"

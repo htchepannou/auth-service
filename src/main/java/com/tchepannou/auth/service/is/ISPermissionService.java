@@ -1,6 +1,6 @@
 package com.tchepannou.auth.service.is;
 
-import com.tchepannou.auth.rr.PermissionCollectionResponse;
+import com.tchepannou.auth.client.v1.PermissionCollectionResponse;
 import com.tchepannou.auth.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

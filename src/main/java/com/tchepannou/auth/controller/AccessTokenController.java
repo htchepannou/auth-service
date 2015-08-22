@@ -2,7 +2,7 @@ package com.tchepannou.auth.controller;
 
 import com.tchepannou.auth.exception.AccessTokenException;
 import com.tchepannou.auth.exception.AccessTokenExpiredException;
-import com.tchepannou.auth.rr.AccessTokenResponse;
+import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.service.AccessTokenService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

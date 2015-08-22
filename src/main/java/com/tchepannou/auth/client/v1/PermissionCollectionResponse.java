@@ -1,4 +1,4 @@
-package com.tchepannou.auth.rr;
+package com.tchepannou.auth.client.v1;
 
 import java.util.HashSet;
 import java.util.Set;

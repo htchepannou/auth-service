@@ -1,7 +1,7 @@
 package com.tchepannou.auth.controller;
 
-import com.tchepannou.auth.rr.AccessTokenResponse;
-import com.tchepannou.auth.rr.PermissionCollectionResponse;
+import com.tchepannou.auth.client.v1.AccessTokenResponse;
+import com.tchepannou.auth.client.v1.PermissionCollectionResponse;
 import com.tchepannou.auth.service.PermissionService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

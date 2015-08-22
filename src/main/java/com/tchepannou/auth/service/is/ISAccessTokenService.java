@@ -3,7 +3,7 @@ package com.tchepannou.auth.service.is;
 import com.tchepannou.auth.domain.AccessToken;
 import com.tchepannou.auth.exception.AccessTokenException;
 import com.tchepannou.auth.exception.AccessTokenExpiredException;
-import com.tchepannou.auth.rr.AccessTokenResponse;
+import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.service.AccessTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

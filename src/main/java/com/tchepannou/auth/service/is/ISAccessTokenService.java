@@ -28,7 +28,7 @@ public class ISAccessTokenService implements AccessTokenService {
                 getRowMapper()
         );
         if (token.hasExpired()){
-            throw new AccessTokenExpiredException("The access token has expired");
+            throw new AccessTokenExpiredException("expired");
         }
         return map(token);
     }

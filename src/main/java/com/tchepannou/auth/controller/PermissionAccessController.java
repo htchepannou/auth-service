@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(basePath = "/v1/permission", value = "Permission", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequestMapping(value="/v1/permission", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PermissionAccessController {
+public class PermissionAccessController  extends AbstractController{
     @Autowired
     private PermissionService permissionService;
 

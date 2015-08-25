@@ -36,7 +36,7 @@ public class AccessTokenController extends AbstractController{
             @ApiResponse(code = 404, message = "Access token not found"),
             @ApiResponse(code = 401, message = "Access token has expired")
     })
-    public AccessTokenResponse get (@PathVariable("id") String id) throws AccessTokenException{
+    public AccessTokenResponse get (@PathVariable("id") String id) {
         return service.findById(id);
     }
 

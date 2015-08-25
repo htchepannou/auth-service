@@ -19,7 +19,7 @@ public class ISAccessTokenService implements AccessTokenService {
 
     //-- AccessTokenService overrides
     @Override
-    public AccessTokenResponse findById(String id) throws AccessTokenException{
+    public AccessTokenResponse findById(String id) {
         final String sql = "SELECT * FROM login WHERE login_id=?";
         AccessToken token = new JdbcTemplate(dataSource).queryForObject(
                 sql,

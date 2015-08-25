@@ -38,7 +38,7 @@ public class ISLoginServiceImpl implements LoginService {
             Map result = new Http()
                     .withHost(hostname)
                     .withObjectMapper(jackson.build())
-                    .withPath("/login/signin.json")
+                    .withPath("/is-api-web/login/signin.json")
                     .withPort(port)
                     .get(Map.class);
 
@@ -63,7 +63,7 @@ public class ISLoginServiceImpl implements LoginService {
             new Http()
                     .withHost(hostname)
                     .withObjectMapper(jackson.build())
-                    .withPath("/login/signout.json")
+                    .withPath("/is-api-web/login/signout.json")
                     .withParams(Collections.singletonMap("id", accessTokenId))
                     .withPort(port)
                     .get();

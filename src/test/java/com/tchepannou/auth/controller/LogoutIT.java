@@ -41,7 +41,6 @@ public class LogoutIT extends AbstractHandler {
     //-- AbstractHandler overrides
     @Override
     public void handle(String uri, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-
         request.setHandled(true);
     }
 

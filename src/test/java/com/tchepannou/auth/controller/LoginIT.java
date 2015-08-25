@@ -95,7 +95,7 @@ public class LoginIT extends AbstractHandler {
     }
 
     @Test
-    public void should_fail_when_auth_failed () throws Exception {
+    public void should_return_409_when_auth_failed () throws Exception {
         Server server = new Server(isPort);
         errorCode = "auth_failed";
         try{
@@ -128,7 +128,7 @@ public class LoginIT extends AbstractHandler {
 
 
     @Test
-    public void should_fail_when_server_not_available () throws Exception {
+    public void should_return_409_when_server_not_available () throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername("foo");
         request.setPassword("fdlkfdl");
@@ -145,6 +145,50 @@ public class LoginIT extends AbstractHandler {
             .statusCode(HttpStatus.SC_CONFLICT)
             .body("code", is(409))
             .body("text", is("connection_error"))
+        ;
+        // @formatter:on
+    }
+
+    @Test
+    public void should_return_400_when_no_username () throws Exception {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("");
+        request.setPassword("fdlkfdl");
+
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .body("code", is(400))
+            .body("text", is("username"))
+        ;
+        // @formatter:on
+    }
+
+    @Test
+    public void should_return_400_when_no_password () throws Exception {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("fdkl");
+        request.setPassword("");
+
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .body("code", is(400))
+            .body("text", is("password"))
         ;
         // @formatter:on
     }

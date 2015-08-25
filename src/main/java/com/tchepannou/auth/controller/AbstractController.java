@@ -20,20 +20,6 @@ public class AbstractController {
         return createErrorResponse(HttpStatus.NOT_FOUND.value(), "not_found", request);
     }
 
-//    @ResponseStatus(value= HttpStatus.UNAUTHORIZED)
-//    @ExceptionHandler(AccessTokenException.class)
-//    public ErrorResponse authenticationFailed(final AccessTokenException exception, final HttpServletRequest request) {
-//        LOG.error("Authentication error", exception);
-//        return createErrorResponse(HttpStatus.UNAUTHORIZED.value(),  exception.getMessage(), request);
-//    }
-//
-//    @ResponseStatus(value= HttpStatus.FORBIDDEN)
-//    @ExceptionHandler(AuthorizationException.class)
-//    public ErrorResponse authorizationFailed(Exception exception, final HttpServletRequest request) {
-//        LOG.error("Authorization failed", exception);
-//        return createErrorResponse(HttpStatus.FORBIDDEN.value(), exception.getMessage(), request);
-//    }
-
     @ResponseStatus(value= HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse validationFailed(MethodArgumentNotValidException ex, final HttpServletRequest request) {

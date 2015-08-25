@@ -1,7 +1,5 @@
 package com.tchepannou.auth.config;
 
-import com.tchepannou.auth.service.PasswordEncryptor;
-import com.tchepannou.auth.service.impl.PasswordEncryptorImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +38,5 @@ public class AppConfig {
         ds.setDriverClassName(driver);
         ds.setUrl(url);
         return ds;
-    }
-
-    @Bean
-    PasswordEncryptor passwordEncryptor(){
-        return new PasswordEncryptorImpl();
     }
 }

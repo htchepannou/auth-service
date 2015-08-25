@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Starter.class)
 @WebIntegrationTest
-@Sql({"/db/clean.sql", "/db/login.sql"})
+@Sql({"/db/clean.sql", "/db/get_access_token.sql"})
 public class GetAccessTokenIT {
     @Value("${server.port}")
     private int port;

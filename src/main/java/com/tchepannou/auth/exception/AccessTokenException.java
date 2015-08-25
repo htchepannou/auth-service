@@ -1,6 +1,6 @@
 package com.tchepannou.auth.exception;
 
-public class AccessTokenException extends Exception {
+public class AccessTokenException extends RuntimeException {
     public AccessTokenException(String message) {
         super(message);
     }

@@ -2,20 +2,26 @@ package com.tchepannou.auth.controller;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.client.v1.LoginRequest;
+import com.tchepannou.auth.exception.AuthenticationException;
 import com.tchepannou.auth.service.LoginService;
+import com.tchepannou.core.client.v1.ErrorResponse;
 import com.tchepannou.core.http.Http;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -44,4 +50,12 @@ public class LoginController extends AbstractController {
     public void logout (@RequestParam(Http.HEADER_ACCESS_TOKEN) String accessToken){
         loginService.logout(accessToken);
     }
+
+    @ResponseStatus(value= HttpStatus.CONFLICT)
+    @ExceptionHandler(AuthenticationException.class)
+    public ErrorResponse authFailed(final Exception exception, final HttpServletRequest request) {
+        return createErrorResponse(HttpStatus.CONFLICT.value(), exception.getMessage(), request);
+    }
+
+
 }

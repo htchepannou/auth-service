@@ -51,7 +51,7 @@ public class ISLoginServiceImpl implements LoginService {
             return accessTokenService.findById(accessTokenId);
 
         } catch (IOException e) {
-            throw new AuthenticationException("io_error", e);
+            throw new AuthenticationException("connection_error", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ISLoginServiceImpl implements LoginService {
                     .withPath("/login/signout.json")
                     .withParams(Collections.singletonMap("id", accessTokenId))
                     .withPort(port)
-                    .get(Map.class);
+                    .get();
 
         } catch (IOException e) {
             throw new IllegalStateException("Unable to logout", e);

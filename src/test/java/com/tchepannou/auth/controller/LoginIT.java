@@ -78,7 +78,7 @@ public class LoginIT extends AbstractHandler {
                     .contentType(ContentType.JSON)
                     .content(request, ObjectMapperType.JACKSON_2)
             .when()
-                .post("/v1/login")
+                .post("/v1/auth/login")
             .then()
                 .log()
                     .all()
@@ -95,7 +95,7 @@ public class LoginIT extends AbstractHandler {
     }
 
     @Test
-    public void should_fail () throws Exception {
+    public void should_fail_when_auth_failed () throws Exception {
         Server server = new Server(isPort);
         errorCode = "auth_failed";
         try{
@@ -111,7 +111,7 @@ public class LoginIT extends AbstractHandler {
                     .contentType(ContentType.JSON)
                     .content(request, ObjectMapperType.JACKSON_2)
             .when()
-                .post("/v1/login")
+                .post("/v1/auth/login")
             .then()
                 .log()
                     .all()
@@ -124,6 +124,28 @@ public class LoginIT extends AbstractHandler {
         } finally {
             server.stop();
         }
+    }
 
+
+    @Test
+    public void should_fail_when_server_not_available () throws Exception {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("foo");
+        request.setPassword("fdlkfdl");
+
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_CONFLICT)
+            .body("code", is(409))
+            .body("text", is("connection_error"))
+        ;
+        // @formatter:on
     }
 }

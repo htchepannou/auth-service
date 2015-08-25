@@ -15,9 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@Api(basePath = "/v1/login", value = "Login/Logout", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequestMapping(value="/v1/login", produces = MediaType.APPLICATION_JSON_VALUE)
-public class LoginController extends AbstractController {
+@Api(basePath = "/v1/auth", value = "Login/Logout", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value="/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+public class AuthenticationController extends AbstractController {
     @Autowired
     private LoginService loginService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, value = "/login")
     @ApiOperation(value="Logs a user in")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
@@ -41,16 +41,18 @@ public class LoginController extends AbstractController {
         return loginService.login(request);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.POST, value="/logout")
     @ApiOperation(value="Logs a user out")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 404, message = "Access token not found")
     })
-    public void logout (@RequestParam(Http.HEADER_ACCESS_TOKEN) String accessToken){
+    public void logout (@RequestHeader(Http.HEADER_ACCESS_TOKEN) String accessToken){
         loginService.logout(accessToken);
     }
 
+
+    //-- Error handler
     @ResponseStatus(value= HttpStatus.CONFLICT)
     @ExceptionHandler(AuthenticationException.class)
     public ErrorResponse authFailed(final Exception exception, final HttpServletRequest request) {

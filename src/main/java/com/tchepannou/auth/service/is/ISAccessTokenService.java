@@ -1,9 +1,8 @@
 package com.tchepannou.auth.service.is;
 
+import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.domain.AccessToken;
 import com.tchepannou.auth.exception.AccessTokenException;
-import com.tchepannou.auth.exception.AccessTokenExpiredException;
-import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.service.AccessTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,7 +27,7 @@ public class ISAccessTokenService implements AccessTokenService {
                 getRowMapper()
         );
         if (token.hasExpired()){
-            throw new AccessTokenExpiredException("expired");
+            throw new AccessTokenException("expired");
         }
         return map(token);
     }
@@ -43,6 +42,7 @@ public class ISAccessTokenService implements AccessTokenService {
 
         return response;
     }
+
     private RowMapper<AccessToken> getRowMapper (){
         return new RowMapper<AccessToken>() {
             @Override

@@ -2,7 +2,6 @@ package com.tchepannou.auth.controller;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.exception.AccessTokenException;
-import com.tchepannou.auth.exception.AccessTokenExpiredException;
 import com.tchepannou.auth.service.AccessTokenService;
 import com.tchepannou.core.client.v1.ErrorResponse;
 import com.wordnik.swagger.annotations.Api;
@@ -43,8 +42,8 @@ public class AccessTokenController extends AbstractController{
 
     //-- Error handler
     @ResponseStatus(value= HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AccessTokenExpiredException.class)
-    public ErrorResponse expired (AccessTokenExpiredException exception, HttpServletRequest request){
+    @ExceptionHandler(AccessTokenException.class)
+    public ErrorResponse expired (AccessTokenException exception, HttpServletRequest request){
         return createErrorResponse(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), request);
     }
 }

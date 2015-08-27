@@ -19,14 +19,14 @@ public class AuthServer {
         server = new Server(port);
         server.setHandler(handler);
         server.start();
-        Thread.sleep(100);
 
         return this;
     }
 
     public AuthServer stop () throws Exception {
-        server.stop();
-
+        if (server != null && server.isStarted()) {
+            server.stop();
+        }
         return this;
     }
 

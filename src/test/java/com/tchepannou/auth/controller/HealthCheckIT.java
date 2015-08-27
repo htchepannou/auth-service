@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.tchepannou.auth.Starter;
 import com.tchepannou.auth.auth.AuthServer;
 import org.apache.http.HttpStatus;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,29 +26,34 @@ public class HealthCheckIT {
     @Value("${insidesoccer.port}")
     private int isPort;
 
+    private AuthServer server;
+
     @Before
     public void setUp (){
         RestAssured.port = port;
+        server = new AuthServer();
     }
 
-    //-- AbstractHandler overrides
+    @After
+    public void tearDown() throws Exception{
+        server.stop();
+    }
+
     @Test
     public void should_success () throws Exception{
-        AuthServer server = new AuthServer().start(isPort, new AuthServer.OKHandler("/health/success.html"));
-        try {
-            // @formatter:off
-            when()
-                .get("/health")
-            .then()
-                .log()
-                    .all()
-                .statusCode(HttpStatus.SC_OK)
-                .body("status", is("UP"))
-            ;
-            // @formatter:on
-        } finally {
-            server.stop();
-        }
+        server.start(isPort, new AuthServer.OKHandler("/health/success.html"));
+        Thread.sleep(1000);
+
+        // @formatter:off
+        when()
+            .get("/health")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_OK)
+            .body("status", is("UP"))
+        ;
+        // @formatter:on
     }
 
 

@@ -10,6 +10,7 @@ import com.tchepannou.auth.client.v1.LoginRequest;
 import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,12 +38,17 @@ public class LoginIT {
     @Value("${insidesoccer.port}")
     private int isPort;
 
-    @Deprecated
-    private String errorCode = "0";
+    private AuthServer server;
 
     @Before
     public void setUp (){
         RestAssured.port = port;
+        server = new AuthServer();
+    }
+
+    @After
+    public void tearDown() throws Exception{
+        server.stop();
     }
 
 
@@ -60,61 +66,52 @@ public class LoginIT {
                 request.setHandled(true);
             }
         };
-        AuthServer server = new AuthServer().start(isPort, handler);
+        server.start(isPort, handler);
 
-        try{
-            LoginRequest request = new LoginRequest();
-            request.setUsername("foo");
-            request.setPassword("fdlkfdl");
+        LoginRequest request = new LoginRequest();
+        request.setUsername("foo");
+        request.setPassword("fdlkfdl");
 
-            // @formatter:off
-            given()
-                    .contentType(ContentType.JSON)
-                    .content(request, ObjectMapperType.JACKSON_2)
-            .when()
-                .post("/v1/auth/login")
-            .then()
-                .log()
-                    .all()
-                .statusCode(HttpStatus.SC_OK)
-                .body("id", is("466500"))
-                .body("userId", is(20176))
-                .body("created", startsWith("2015-08-27"))
-            ;
-            // @formatter:on
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_OK)
+            .body("id", is("466500"))
+            .body("userId", is(20176))
+            .body("created", startsWith("2015-08-27"))
+        ;
+        // @formatter:on
 
-        } finally {
-            server.stop();
-        }
     }
 
     @Test
     public void should_return_409_when_auth_failed () throws Exception {
-        AuthServer server = new AuthServer().start(isPort, new AuthServer.OKHandler("/login/auth_failed.json"));
+        server.start(isPort, new AuthServer.OKHandler("/login/auth_failed.json"));
 
-        try{
-            LoginRequest request = new LoginRequest();
-            request.setUsername("foo");
-            request.setPassword("fdlkfdl");
+        LoginRequest request = new LoginRequest();
+        request.setUsername("foo");
+        request.setPassword("fdlkfdl");
 
-            // @formatter:off
-            given()
-                    .contentType(ContentType.JSON)
-                    .content(request, ObjectMapperType.JACKSON_2)
-            .when()
-                .post("/v1/auth/login")
-            .then()
-                .log()
-                    .all()
-                .statusCode(HttpStatus.SC_CONFLICT)
-                .body("code", is(409))
-                .body("text", is(AuthErrors.AUTH_FAILED))
-            ;
-            // @formatter:on
-
-        } finally {
-            server.stop();
-        }
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_CONFLICT)
+            .body("code", is(409))
+            .body("text", is(AuthErrors.AUTH_FAILED))
+        ;
+        // @formatter:on
     }
 
 

@@ -1,10 +1,9 @@
 package com.tchepannou.auth.controller;
 
 import com.jayway.restassured.RestAssured;
+import com.tchepannou.auth.Starter;
+import com.tchepannou.auth.auth.AuthServer;
 import org.apache.http.HttpStatus;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.tchepannou.auth.Starter;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Starter.class)
 @WebIntegrationTest
-public class HealthCheckIT extends AbstractHandler {
+public class HealthCheckIT {
     @Value ("${server.port}")
     private int port;
 
@@ -38,17 +31,9 @@ public class HealthCheckIT extends AbstractHandler {
     }
 
     //-- AbstractHandler overrides
-    @Override
-    public void handle(String uri, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        request.setHandled(true);
-    }
-
     @Test
     public void should_success () throws Exception{
-        Server server = new Server(isPort);
-        server.setHandler(this);
-        server.start();
-        Thread.sleep(2000);
+        AuthServer server = new AuthServer().start(isPort, new AuthServer.OKHandler("/health/success.html"));
         try {
             // @formatter:off
             when()

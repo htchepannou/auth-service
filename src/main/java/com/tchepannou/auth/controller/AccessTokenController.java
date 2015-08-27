@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @RestController
 @Api(basePath = "/v1/access_token", value = "AccessToken", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,17 +34,17 @@ public class AccessTokenController extends AbstractController{
     @ApiOperation(value="Get AccessToken", notes="Returns an access token by it's ID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
-            @ApiResponse(code = 404, message = "Access token not found"),
-            @ApiResponse(code = 401, message = "Access token has expired")
+            @ApiResponse(code = 401, message = "Access token not available or expired")
     })
-    public AccessTokenResponse get (@PathVariable("id") String id) {
+    public AccessTokenResponse get (@PathVariable("id") String id) throws IOException {
         return service.findById(id);
     }
 
     //-- Error handler
     @ResponseStatus(value= HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AccessTokenException.class)
-    public ErrorResponse expired (AccessTokenException exception, HttpServletRequest request){
+    public ErrorResponse tokenError (AccessTokenException exception, HttpServletRequest request){
+        getLogger().error("{} - Unable to resolve the token", request.getRequestURI(), exception);
         return createErrorResponse(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), request);
     }
 }

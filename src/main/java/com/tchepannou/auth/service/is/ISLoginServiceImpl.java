@@ -17,6 +17,9 @@ import java.util.Map;
 
 public class ISLoginServiceImpl implements LoginService {
     //-- Attributes
+    @Value("${insidesoccer.protocol}")
+    private String protocol;
+
     @Value("${insidesoccer.hostname}")
     private String hostname;
 
@@ -36,10 +39,13 @@ public class ISLoginServiceImpl implements LoginService {
         try {
 
             Map result = new Http()
+                    .withProtocol(protocol)
                     .withHost(hostname)
-                    .withObjectMapper(jackson.build())
-                    .withPath("/is-api-web/login/signin.json")
                     .withPort(port)
+                    .withPath("/is-api-web/login/signin.json")
+                    .param("name", request.getUsername())
+                    .param("password", request.getPassword())
+                    .withObjectMapper(jackson.build())
                     .get(Map.class);
 
             String error = (String)result.get("error_code");

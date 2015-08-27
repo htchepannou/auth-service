@@ -48,10 +48,10 @@ public class LogoutIT extends AbstractHandler {
     @Test
     public void should_logout () throws Exception{
         Server server = new Server(isPort);
-        try{
-            server.setHandler(this);
-            server.start();
+        server.setHandler(this);
+        server.start();
 
+        try{
             // @formatter:off
             given()
                     .header(Http.HEADER_ACCESS_TOKEN, "212")

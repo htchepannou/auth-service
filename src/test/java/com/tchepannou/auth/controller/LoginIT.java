@@ -65,10 +65,10 @@ public class LoginIT extends AbstractHandler {
     @Test
     public void should_login () throws Exception{
         Server server = new Server(isPort);
-        try{
-            server.setHandler(this);
-            server.start();
+        server.setHandler(this);
+        server.start();
 
+        try{
             LoginRequest request = new LoginRequest();
             request.setUsername("foo");
             request.setPassword("fdlkfdl");
@@ -97,11 +97,11 @@ public class LoginIT extends AbstractHandler {
     @Test
     public void should_return_409_when_auth_failed () throws Exception {
         Server server = new Server(isPort);
-        errorCode = "auth_failed";
-        try{
-            server.setHandler(this);
-            server.start();
+        server.setHandler(this);
+        server.start();
 
+        errorCode = "102";
+        try{
             LoginRequest request = new LoginRequest();
             request.setUsername("foo");
             request.setPassword("fdlkfdl");

@@ -48,6 +48,7 @@ public class HealthCheckIT extends AbstractHandler {
         Server server = new Server(isPort);
         server.setHandler(this);
         server.start();
+        Thread.sleep(2000);
         try {
             // @formatter:off
             when()

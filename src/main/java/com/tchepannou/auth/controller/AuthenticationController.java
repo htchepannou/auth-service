@@ -56,6 +56,8 @@ public class AuthenticationController extends AbstractController {
     @ResponseStatus(value= HttpStatus.CONFLICT)
     @ExceptionHandler(AuthenticationException.class)
     public ErrorResponse authFailed(final Exception exception, final HttpServletRequest request) {
+        getLogger().error("Authentication failed", exception);
+
         return createErrorResponse(HttpStatus.CONFLICT.value(), exception.getMessage(), request);
     }
 

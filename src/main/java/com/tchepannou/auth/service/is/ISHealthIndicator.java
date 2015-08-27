@@ -12,6 +12,9 @@ import java.io.IOException;
 public class ISHealthIndicator implements HealthIndicator {
     private static final Logger LOG = LoggerFactory.getLogger(ISHealthIndicator.class);
 
+    @Value("${insidesoccer.protocol}")
+    private String protocol;
+
     @Value("${insidesoccer.hostname}")
     private String hostname;
 
@@ -24,6 +27,7 @@ public class ISHealthIndicator implements HealthIndicator {
     public Health health() {
         try {
             new Http()
+                    .withProtocol(protocol)
                     .withHost(hostname)
                     .withPort(port)
                     .withPath("/is-api-web/help")

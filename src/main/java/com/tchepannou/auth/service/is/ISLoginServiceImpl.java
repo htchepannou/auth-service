@@ -10,7 +10,6 @@ import com.tchepannou.core.http.Http;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -35,7 +34,6 @@ public class ISLoginServiceImpl implements LoginService {
 
     //-- LoginService overrides
     @Override
-    @Transactional
     public AccessTokenResponse login(LoginRequest request) throws IOException {
         Map result = new Http()
                 .withProtocol(protocol)
@@ -57,7 +55,6 @@ public class ISLoginServiceImpl implements LoginService {
     }
 
     @Override
-    @Transactional
     public void logout(String accessTokenId) throws IOException {
         new Http()
                 .withHost(hostname)

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @Api(basePath = "/v1/auth", value = "Login/Logout", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +38,7 @@ public class AuthenticationController extends AbstractController {
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 409, message = "Authentication failed")
     })
-    public AccessTokenResponse login (@Valid @RequestBody LoginRequest request){
+    public AccessTokenResponse login (@Valid @RequestBody LoginRequest request) throws IOException {
         return loginService.login(request);
     }
 
@@ -47,7 +48,7 @@ public class AuthenticationController extends AbstractController {
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 404, message = "Access token not found")
     })
-    public void logout (@RequestHeader(Http.HEADER_ACCESS_TOKEN) String accessToken){
+    public void logout (@RequestHeader(Http.HEADER_ACCESS_TOKEN) String accessToken) throws IOException {
         loginService.logout(accessToken);
     }
 

@@ -1,6 +1,7 @@
 package com.tchepannou.auth.service.is;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
+import com.tchepannou.auth.client.v1.AuthErrors;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import com.tchepannou.auth.exception.AuthenticationException;
 import com.tchepannou.auth.service.AccessTokenService;
@@ -35,48 +36,36 @@ public class ISLoginServiceImpl implements LoginService {
     //-- LoginService overrides
     @Override
     @Transactional
-    public AccessTokenResponse login(LoginRequest request) {
-        try {
+    public AccessTokenResponse login(LoginRequest request) throws IOException {
+        Map result = new Http()
+                .withProtocol(protocol)
+                .withHost(hostname)
+                .withPort(port)
+                .withPath("/is-api-web/login/signin.json")
+                .param("name", request.getUsername())
+                .param("password", request.getPassword())
+                .withObjectMapper(jackson.build())
+                .get(Map.class);
 
-            Map result = new Http()
-                    .withProtocol(protocol)
-                    .withHost(hostname)
-                    .withPort(port)
-                    .withPath("/is-api-web/login/signin.json")
-                    .param("name", request.getUsername())
-                    .param("password", request.getPassword())
-                    .withObjectMapper(jackson.build())
-                    .get(Map.class);
-
-            String error = (String)result.get("error_code");
-            if (!"0".equals(error)){
-                throw new AuthenticationException(error);
-            }
-
-            String accessTokenId = (String)result.get("login_id");
-            return accessTokenService.findById(accessTokenId);
-
-        } catch (IOException e) {
-            throw new AuthenticationException("connection_error", e);
+        String error = (String)result.get("error_code");
+        if (!"0".equals(error)){
+            throw new AuthenticationException(AuthErrors.AUTH_FAILED);
         }
+
+        String accessTokenId = (String)result.get("login_id");
+        return accessTokenService.findById(accessTokenId);
     }
 
     @Override
     @Transactional
-    public void logout(String accessTokenId) {
-        try {
-
-            new Http()
-                    .withHost(hostname)
-                    .withObjectMapper(jackson.build())
-                    .withPath("/is-api-web/login/signout.json")
-                    .withParams(Collections.singletonMap("id", accessTokenId))
-                    .withPort(port)
-                    .get();
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to logout", e);
-        }
+    public void logout(String accessTokenId) throws IOException {
+        new Http()
+                .withHost(hostname)
+                .withObjectMapper(jackson.build())
+                .withPath("/is-api-web/login/signout.json")
+                .withParams(Collections.singletonMap("id", accessTokenId))
+                .withPort(port)
+                .get();
     }
 
     //-- Private

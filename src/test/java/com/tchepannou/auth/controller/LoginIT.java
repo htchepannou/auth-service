@@ -4,10 +4,11 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.internal.mapper.ObjectMapperType;
 import com.tchepannou.auth.Starter;
+import com.tchepannou.auth.auth.AuthServer;
+import com.tchepannou.auth.client.v1.AuthErrors;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +39,7 @@ public class LoginIT extends AbstractHandler {
     @Value("${insidesoccer.port}")
     private int isPort;
 
+    @Deprecated
     private String errorCode = "0";
 
     @Before
@@ -46,27 +48,24 @@ public class LoginIT extends AbstractHandler {
     }
 
 
-    //-- AbstractHandler overrides
-    @Override
-    public void handle(String uri, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+    public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
 
-        request.setHandled(true);
-        httpServletResponse.addHeader("Content-Type", "application/json");
-        httpServletResponse.setStatus(200);
-        httpServletResponse.getWriter().write(
-                "{"
-                        + "\"error_code\":\"" + errorCode + "\","
-                        + "\"login_id\":\"100\""
-                + "}"
-        );
     }
-
     //-- Tests
     @Test
     public void should_login () throws Exception{
-        Server server = new Server(isPort);
-        server.setHandler(this);
-        server.start();
+        final AbstractHandler handler = new AbstractHandler() {
+            @Override public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+                    throws IOException, ServletException {
+                if (s.startsWith("/is-api-web/login/signin.json")){
+                    new AuthServer.OKHandler("/login/success.json").handle(s, request, httpServletRequest, httpServletResponse);
+                } else if (s.startsWith("/is-api-web/login/show.json")){
+                    new AuthServer.OKHandler("/login/access_token.json").handle(s, request, httpServletRequest, httpServletResponse);
+                }
+                request.setHandled(true);
+            }
+        };
+        AuthServer server = new AuthServer().start(isPort, handler);
 
         try{
             LoginRequest request = new LoginRequest();
@@ -83,9 +82,9 @@ public class LoginIT extends AbstractHandler {
                 .log()
                     .all()
                 .statusCode(HttpStatus.SC_OK)
-                .body("id", is("100"))
-                .body("userId", is(200))
-                .body("created", notNullValue())
+                .body("id", is("466500"))
+                .body("userId", is(20176))
+                .body("created", startsWith("2015-08-27"))
             ;
             // @formatter:on
 
@@ -96,11 +95,8 @@ public class LoginIT extends AbstractHandler {
 
     @Test
     public void should_return_409_when_auth_failed () throws Exception {
-        Server server = new Server(isPort);
-        server.setHandler(this);
-        server.start();
+        AuthServer server = new AuthServer().start(isPort, new AuthServer.OKHandler("/login/auth_failed.json"));
 
-        errorCode = "102";
         try{
             LoginRequest request = new LoginRequest();
             request.setUsername("foo");
@@ -117,7 +113,7 @@ public class LoginIT extends AbstractHandler {
                     .all()
                 .statusCode(HttpStatus.SC_CONFLICT)
                 .body("code", is(409))
-                .body("text", is(errorCode))
+                .body("text", is(AuthErrors.AUTH_FAILED))
             ;
             // @formatter:on
 
@@ -128,7 +124,7 @@ public class LoginIT extends AbstractHandler {
 
 
     @Test
-    public void should_return_409_when_server_not_available () throws Exception {
+    public void should_return_500_when_server_not_available () throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername("foo");
         request.setPassword("fdlkfdl");
@@ -142,9 +138,9 @@ public class LoginIT extends AbstractHandler {
         .then()
             .log()
                 .all()
-            .statusCode(HttpStatus.SC_CONFLICT)
-            .body("code", is(409))
-            .body("text", is("connection_error"))
+            .statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+            .body("code", is(500))
+            .body("text", is(AuthErrors.IO_ERROR))
         ;
         // @formatter:on
     }

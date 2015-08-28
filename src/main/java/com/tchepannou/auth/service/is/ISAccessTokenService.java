@@ -44,13 +44,6 @@ public class ISAccessTokenService implements AccessTokenService {
                     .withObjectMapper(jackson.build())
                     .get(Map.class);
 
-            if (
-                    Boolean.FALSE.equals(result.get("active"))
-                    || result.get("logoutDate") != null
-            ){
-                throw new AccessTokenException(AuthErrors.TOKEN_EXPIRED);
-            }
-
             return map(result);
 
         } catch (ParseException e){
@@ -67,6 +60,10 @@ public class ISAccessTokenService implements AccessTokenService {
 
     //-- Private
     private AccessTokenResponse map (Map result) throws ParseException {
+        if (Boolean.FALSE.equals(result.get("active")) || result.get("logout_date") != null){
+            throw new AccessTokenException(AuthErrors.TOKEN_EXPIRED);
+        }
+
         final AccessTokenResponse response = new AccessTokenResponse();
 
         response.setId((String) result.get("id"));
@@ -77,11 +74,6 @@ public class ISAccessTokenService implements AccessTokenService {
         final SimpleDateFormat fmt = new SimpleDateFormat("yyyy/MM/dd");
         response.setCreated(fmt.parse((String)result.get("date")));
 
-        if (result.containsKey("logout_date")){
-            response.setExpiryDate(fmt.parse((String)result.get("logout_date")));
-        }
-
         return response;
     }
-
 }

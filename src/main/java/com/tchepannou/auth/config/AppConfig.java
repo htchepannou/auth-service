@@ -1,7 +1,9 @@
 package com.tchepannou.auth.config;
 
 import com.tchepannou.auth.service.LoginCommand;
+import com.tchepannou.auth.service.LogoutCommand;
 import com.tchepannou.auth.service.command.LoginCommandImpl;
+import com.tchepannou.auth.service.command.LogoutCommandImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.JmsListenerContainerFactory;
@@ -27,5 +29,9 @@ public class AppConfig {
     @Bean
     LoginCommand loginCommand () {
         return new LoginCommandImpl();
+    }
+
+    @Bean LogoutCommand logoutCommand () {
+        return new LogoutCommandImpl();
     }
 }

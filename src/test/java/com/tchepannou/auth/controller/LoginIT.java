@@ -99,7 +99,6 @@ public class LoginIT {
         assertThat(AuthEventReceiver.lastEvent.getAccessTokenId()).isEqualTo("466500");
         assertThat(AuthEventReceiver.lastEvent.getType()).isEqualTo(AuthConstants.EVENT_LOGIN);
         assertThat(AuthEventReceiver.lastEvent.getTransactionId()).isEqualTo("fdlkfldk");
-        assertThat(AuthEventReceiver.lastEvent.getTransactionId()).isEqualTo("fdlkfldk");
         assertThat(AuthEventReceiver.lastEvent.getDate()).isAfterOrEqualsTo(now);
     }
 

@@ -1,6 +1,5 @@
 package com.tchepannou.auth.controller;
 
-import com.tchepannou.auth.client.v1.AuthErrors;
 import com.tchepannou.core.client.v1.ErrorResponse;
 import com.tchepannou.core.http.Http;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 
 public class AbstractController {
@@ -31,10 +29,7 @@ public class AbstractController {
     public ErrorResponse failure(final Exception exception, final HttpServletRequest request) {
         getLogger().error("{} - Unexpected error.", request.getRequestURI(), exception);
 
-        String msg = exception instanceof IOException
-                ? AuthErrors.IO_ERROR
-                : exception.getMessage();
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, request);
+        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request);
     }
 
     protected ErrorResponse createErrorResponse(int code, String text, HttpServletRequest request){

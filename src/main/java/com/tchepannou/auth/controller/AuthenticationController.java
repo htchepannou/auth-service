@@ -5,7 +5,7 @@ import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import com.tchepannou.auth.exception.AuthenticationException;
 import com.tchepannou.auth.service.LoginCommand;
-import com.tchepannou.auth.service.LoginService;
+import com.tchepannou.auth.service.LogoutCommand;
 import com.tchepannou.core.client.v1.ErrorResponse;
 import com.tchepannou.core.http.Http;
 import com.wordnik.swagger.annotations.Api;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 
 @RestController
@@ -37,11 +36,12 @@ public class AuthenticationController extends AbstractController {
     private LoginCommand loginCommand;
 
     @Autowired
-    private LoginService loginService;
+    private LogoutCommand logoutCommand;
+
 
     //-- REST endpoints
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    @ApiOperation(value="Logs a user in")
+    @ApiOperation(value="Login a user")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 409, message = AuthConstants.ERROR_AUTH_FAILED),
@@ -58,13 +58,18 @@ public class AuthenticationController extends AbstractController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/logout/{accessToken}")
-    @ApiOperation(value="Logs a user out")
+    @ApiOperation(value="Logout a user")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 404, message = "Access token not found")
     })
-    public void logout (@RequestParam String accessToken) throws IOException {
-        loginService.logout(accessToken);
+    public void logout (
+            @RequestHeader(Http.HEADER_TRANSACTION_ID) String transactionId,
+            @RequestParam String accessToken
+    ) throws IOException {
+        logoutCommand.execute(null,
+                new CommandContextImpl().withAccessTokenId(accessToken).withTransactionId(transactionId)
+        );
     }
 
 

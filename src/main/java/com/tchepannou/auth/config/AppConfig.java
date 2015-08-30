@@ -1,7 +1,9 @@
 package com.tchepannou.auth.config;
 
+import com.tchepannou.auth.service.GetAccessTokenCommand;
 import com.tchepannou.auth.service.LoginCommand;
 import com.tchepannou.auth.service.LogoutCommand;
+import com.tchepannou.auth.service.command.GetAccessTokenCommandImpl;
 import com.tchepannou.auth.service.command.LoginCommandImpl;
 import com.tchepannou.auth.service.command.LogoutCommandImpl;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +33,13 @@ public class AppConfig {
         return new LoginCommandImpl();
     }
 
-    @Bean LogoutCommand logoutCommand () {
+    @Bean
+    LogoutCommand logoutCommand () {
         return new LogoutCommandImpl();
+    }
+
+    @Bean
+    GetAccessTokenCommand getAccessTokenCommand () {
+        return new GetAccessTokenCommandImpl();
     }
 }

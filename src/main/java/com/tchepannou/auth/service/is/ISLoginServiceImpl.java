@@ -64,6 +64,4 @@ public class ISLoginServiceImpl implements LoginService {
                 .withPort(port)
                 .get();
     }
-
-    //-- Private
 }

@@ -1,7 +1,7 @@
 package com.tchepannou.auth.service.is;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
-import com.tchepannou.auth.client.v1.AuthErrors;
+import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.exception.AccessTokenException;
 import com.tchepannou.auth.service.AccessTokenService;
 import com.tchepannou.core.http.Http;
@@ -47,13 +47,12 @@ public class ISAccessTokenService implements AccessTokenService {
             return map(result);
 
         } catch (ParseException e){
-            throw new AccessTokenException(AuthErrors.BAD_TOKEN, e);
+            throw new AccessTokenException(AuthConstants.ERROR_BAD_TOKEN, e);
         } catch (HttpException e){
             if (e.getStatus() == 404) {
-                throw new AccessTokenException(AuthErrors.TOKEN_NOT_FOUND, e);
-            } else {
-                throw new AccessTokenException(AuthErrors.IO_ERROR, e);
+                throw new AccessTokenException(AuthConstants.ERROR_TOKEN_NOT_FOUND, e);
             }
+            throw e;
         }
     }
 
@@ -61,7 +60,7 @@ public class ISAccessTokenService implements AccessTokenService {
     //-- Private
     private AccessTokenResponse map (Map result) throws ParseException {
         if (Boolean.FALSE.equals(result.get("active")) || result.get("logout_date") != null){
-            throw new AccessTokenException(AuthErrors.TOKEN_EXPIRED);
+            throw new AccessTokenException(AuthConstants.ERROR_TOKEN_EXPIRED);
         }
 
         final AccessTokenResponse response = new AccessTokenResponse();

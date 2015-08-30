@@ -3,7 +3,6 @@ package com.tchepannou.auth.service.command;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Strings;
-import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.client.v1.AuthEvent;
 import com.tchepannou.auth.service.Command;
@@ -82,8 +81,8 @@ public abstract class AbstractCommand<I, O> implements Command<I, O> {
         }
 
 
-        if (response instanceof AccessTokenResponse) {
-            String id = ((AccessTokenResponse)response).getId();
+        String id = context.getAccessTokenId();
+        if (id != null) {
             AuthEvent event = new AuthEvent(id, name, context.getTransactionId());
             jmsTemplate.send(AuthConstants.QUEUE_EVENT_LOG, session -> session.createObjectMessage(event));
         }

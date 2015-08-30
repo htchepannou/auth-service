@@ -38,6 +38,8 @@ public class LogoutIT {
     public void setUp (){
         RestAssured.port = port;
         server = new AuthServer();
+
+        AuthEventReceiver.lastEvent = null;
     }
 
     @After
@@ -77,13 +79,13 @@ public class LogoutIT {
         given()
                 .header(Http.HEADER_TRANSACTION_ID, "2093209")
         .when()
-            .post("/v1/auth/logout")
+            .post("/v1/auth/logout/2390")
         .then()
             .log()
                 .all()
             .statusCode(HttpStatus.SC_CONFLICT)
             .body("code", is(409))
-            .body("text", is(AuthConstants.ERROR_AUTH_FAILED))
+            .body("text", is(AuthConstants.ERROR_IO))
         ;
         // @formatter:on
     }

@@ -1,10 +1,11 @@
 package com.tchepannou.auth.controller;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
+import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.exception.AccessTokenException;
-import com.tchepannou.auth.service.AccessTokenService;
-import com.tchepannou.auth.service.LoginCommand;
+import com.tchepannou.auth.service.GetAccessTokenCommand;
 import com.tchepannou.core.client.v1.ErrorResponse;
+import com.tchepannou.core.http.Http;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,19 +30,27 @@ import java.io.IOException;
 public class AccessTokenController extends AbstractController{
     //-- Attribute
     @Autowired
-    private AccessTokenService service;
+    private GetAccessTokenCommand getAccessTokenCommand;
 
     //-- REST methods
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
     @ApiOperation(value="Get AccessToken", notes="Returns an access token by it's ID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
-            @ApiResponse(code = 401, message = "Access token not available or expired")
+            @ApiResponse(code = 401, message = AuthConstants.ERROR_TOKEN_NOT_FOUND),
+            @ApiResponse(code = 401, message = AuthConstants.ERROR_TOKEN_EXPIRED),
+            @ApiResponse(code = 401, message = AuthConstants.ERROR_BAD_TOKEN),
     })
     public AccessTokenResponse get (
+            @RequestHeader(Http.HEADER_TRANSACTION_ID) String transactionId,
             @PathVariable("id") String id
     ) throws IOException {
-        return service.findById(id);
+        return getAccessTokenCommand.execute(
+                null,
+                new CommandContextImpl()
+                        .withTransactionId(transactionId)
+                        .withAccessTokenId(id)
+        );
     }
 
     //-- Error handler
@@ -50,4 +60,13 @@ public class AccessTokenController extends AbstractController{
         getLogger().error("{} - Unable to resolve the token", request.getRequestURI(), exception);
         return createErrorResponse(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), request);
     }
+
+    @ResponseStatus(value= HttpStatus.NOT_FOUND)
+    @ExceptionHandler(IOException.class)
+    public ErrorResponse ioError(final IOException exception, final HttpServletRequest request) {
+        getLogger().error("IO Error", exception);
+
+        return createErrorResponse(HttpStatus.NOT_FOUND.value(), AuthConstants.ERROR_IO, request);
+    }
+
 }

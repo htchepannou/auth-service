@@ -53,6 +53,8 @@ public class LoginIT {
     @After
     public void tearDown() throws Exception{
         server.stop();
+
+        AuthEventReceiver.lastEvent = null;
     }
 
 

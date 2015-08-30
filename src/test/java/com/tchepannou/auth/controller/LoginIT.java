@@ -6,7 +6,6 @@ import com.jayway.restassured.internal.mapper.ObjectMapperType;
 import com.tchepannou.auth.Starter;
 import com.tchepannou.auth.auth.AuthServer;
 import com.tchepannou.auth.client.v1.AuthConstants;
-import com.tchepannou.auth.client.v1.AuthErrors;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import com.tchepannou.auth.jms.AuthEventReceiver;
 import com.tchepannou.core.http.Http;
@@ -105,55 +104,6 @@ public class LoginIT {
     }
 
     @Test
-    public void should_return_409_when_auth_failed () throws Exception {
-        server.start(isPort, new AuthServer.OKHandler("/login/auth_failed.json"));
-
-        LoginRequest request = new LoginRequest();
-        request.setUsername("foo");
-        request.setPassword("fdlkfdl");
-
-        // @formatter:off
-        given()
-                .contentType(ContentType.JSON)
-                .content(request, ObjectMapperType.JACKSON_2)
-                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
-        .when()
-            .post("/v1/auth/login")
-        .then()
-            .log()
-                .all()
-            .statusCode(HttpStatus.SC_CONFLICT)
-            .body("code", is(409))
-            .body("text", is(AuthErrors.AUTH_FAILED))
-        ;
-        // @formatter:on
-    }
-
-
-    @Test
-    public void should_return_500_when_server_not_available () throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("foo");
-        request.setPassword("fdlkfdl");
-
-        // @formatter:off
-        given()
-                .contentType(ContentType.JSON)
-                .content(request, ObjectMapperType.JACKSON_2)
-                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
-        .when()
-            .post("/v1/auth/login")
-        .then()
-            .log()
-                .all()
-            .statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-            .body("code", is(500))
-            .body("text", is(AuthErrors.IO_ERROR))
-        ;
-        // @formatter:on
-    }
-
-    @Test
     public void should_return_400_when_no_username () throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername("");
@@ -195,6 +145,54 @@ public class LoginIT {
             .statusCode(HttpStatus.SC_BAD_REQUEST)
             .body("code", is(400))
             .body("text", is("password"))
+        ;
+        // @formatter:on
+    }
+
+    @Test
+    public void should_return_409_when_server_not_available () throws Exception {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("foo");
+        request.setPassword("fdlkfdl");
+
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_CONFLICT)
+            .body("code", is(409))
+            .body("text", is(AuthConstants.ERROR_IO))
+        ;
+        // @formatter:on
+    }
+
+    @Test
+    public void should_return_409_when_auth_failed () throws Exception {
+        server.start(isPort, new AuthServer.OKHandler("/login/auth_failed.json"));
+
+        LoginRequest request = new LoginRequest();
+        request.setUsername("foo");
+        request.setPassword("fdlkfdl");
+
+        // @formatter:off
+        given()
+                .contentType(ContentType.JSON)
+                .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .log()
+                .all()
+            .statusCode(HttpStatus.SC_CONFLICT)
+            .body("code", is(409))
+            .body("text", is(AuthConstants.ERROR_AUTH_FAILED))
         ;
         // @formatter:on
     }

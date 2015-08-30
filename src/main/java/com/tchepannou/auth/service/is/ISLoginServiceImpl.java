@@ -1,7 +1,7 @@
 package com.tchepannou.auth.service.is;
 
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
-import com.tchepannou.auth.client.v1.AuthErrors;
+import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import com.tchepannou.auth.exception.AuthenticationException;
 import com.tchepannou.auth.service.AccessTokenService;
@@ -47,7 +47,7 @@ public class ISLoginServiceImpl implements LoginService {
 
         String error = (String)result.get("error_code");
         if (!"0".equals(error)){
-            throw new AuthenticationException(AuthErrors.AUTH_FAILED);
+            throw new AuthenticationException(AuthConstants.ERROR_AUTH_FAILED);
         }
 
         String accessTokenId = (String)result.get("login_id");

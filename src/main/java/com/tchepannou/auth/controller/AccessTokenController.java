@@ -3,6 +3,7 @@ package com.tchepannou.auth.controller;
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.exception.AccessTokenException;
 import com.tchepannou.auth.service.AccessTokenService;
+import com.tchepannou.auth.service.LoginCommand;
 import com.tchepannou.core.client.v1.ErrorResponse;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -36,7 +37,9 @@ public class AccessTokenController extends AbstractController{
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 401, message = "Access token not available or expired")
     })
-    public AccessTokenResponse get (@PathVariable("id") String id) throws IOException {
+    public AccessTokenResponse get (
+            @PathVariable("id") String id
+    ) throws IOException {
         return service.findById(id);
     }
 

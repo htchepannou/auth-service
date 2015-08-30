@@ -3,6 +3,7 @@ package com.tchepannou.auth.controller;
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.client.v1.LoginRequest;
 import com.tchepannou.auth.exception.AuthenticationException;
+import com.tchepannou.auth.service.LoginCommand;
 import com.tchepannou.auth.service.LoginService;
 import com.tchepannou.core.client.v1.ErrorResponse;
 import com.tchepannou.core.http.Http;
@@ -30,16 +31,26 @@ import java.io.IOException;
 @RequestMapping(value="/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController extends AbstractController {
     @Autowired
+    private LoginCommand loginCommand;
+
+    @Autowired
     private LoginService loginService;
 
+    //-- REST endpoints
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     @ApiOperation(value="Logs a user in")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success", response = AccessTokenResponse.class),
             @ApiResponse(code = 409, message = "Authentication failed")
     })
-    public AccessTokenResponse login (@Valid @RequestBody LoginRequest request) throws IOException {
-        return loginService.login(request);
+    public AccessTokenResponse login (
+            @RequestHeader(Http.HEADER_TRANSACTION_ID) String transactionId,
+            @Valid @RequestBody LoginRequest request
+    ) throws IOException {
+        return loginCommand.execute(
+                request,
+                new CommandContextImpl().withTransactionId(transactionId)
+        );
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/logout")

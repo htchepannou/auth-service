@@ -5,8 +5,11 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.internal.mapper.ObjectMapperType;
 import com.tchepannou.auth.Starter;
 import com.tchepannou.auth.auth.AuthServer;
+import com.tchepannou.auth.client.v1.AuthConstants;
 import com.tchepannou.auth.client.v1.AuthErrors;
 import com.tchepannou.auth.client.v1.LoginRequest;
+import com.tchepannou.auth.jms.AuthEventReceiver;
+import com.tchepannou.core.http.Http;
 import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -23,8 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.Is.is;
 
@@ -68,14 +73,17 @@ public class LoginIT {
         };
         server.start(isPort, handler);
 
-        LoginRequest request = new LoginRequest();
+        final LoginRequest request = new LoginRequest();
         request.setUsername("foo");
         request.setPassword("fdlkfdl");
+
+        final Date now = new Date ();
 
         // @formatter:off
         given()
                 .contentType(ContentType.JSON)
                 .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
         .when()
             .post("/v1/auth/login")
         .then()
@@ -88,6 +96,12 @@ public class LoginIT {
         ;
         // @formatter:on
 
+
+        assertThat(AuthEventReceiver.lastEvent.getAccessTokenId()).isEqualTo("466500");
+        assertThat(AuthEventReceiver.lastEvent.getType()).isEqualTo(AuthConstants.EVENT_LOGIN);
+        assertThat(AuthEventReceiver.lastEvent.getTransactionId()).isEqualTo("fdlkfldk");
+        assertThat(AuthEventReceiver.lastEvent.getTransactionId()).isEqualTo("fdlkfldk");
+        assertThat(AuthEventReceiver.lastEvent.getDate()).isAfterOrEqualsTo(now);
     }
 
     @Test
@@ -102,6 +116,7 @@ public class LoginIT {
         given()
                 .contentType(ContentType.JSON)
                 .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
         .when()
             .post("/v1/auth/login")
         .then()
@@ -125,6 +140,7 @@ public class LoginIT {
         given()
                 .contentType(ContentType.JSON)
                 .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
         .when()
             .post("/v1/auth/login")
         .then()
@@ -147,6 +163,7 @@ public class LoginIT {
         given()
                 .contentType(ContentType.JSON)
                 .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
         .when()
             .post("/v1/auth/login")
         .then()
@@ -169,6 +186,7 @@ public class LoginIT {
         given()
                 .contentType(ContentType.JSON)
                 .content(request, ObjectMapperType.JACKSON_2)
+                .header(Http.HEADER_TRANSACTION_ID, "fdlkfldk")
         .when()
             .post("/v1/auth/login")
         .then()

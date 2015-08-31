@@ -22,7 +22,7 @@ public class IsConfig {
     }
 
     @Bean
-    HealthIndicator ISHealthIndicator () {
+    HealthIndicator insidesoccerHealthIndicator () {
         return new ISHealthIndicator();
     }
 }

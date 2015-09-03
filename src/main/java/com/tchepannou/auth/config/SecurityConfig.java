@@ -1,6 +1,5 @@
 package com.tchepannou.auth.config;
 
-import com.tchepannou.core.http.Http;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,11 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     throws ServletException, IOException {
                 httpServletResponse.addHeader("Access-Control-Allow-Origin", "*");
                 httpServletResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-                httpServletResponse.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with" +
-                                Http.HEADER_ACCESS_TOKEN + "," +
-                                Http.HEADER_DEBUG + "," +
-                                Http.HEADER_TRANSACTION_ID
-                );
+                httpServletResponse.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
             }
         });

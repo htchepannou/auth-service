@@ -57,11 +57,12 @@ public class ISLoginServiceImpl implements LoginService {
     @Override
     public void logout(String accessTokenId) throws IOException {
         new Http()
+                .withProtocol(protocol)
                 .withHost(hostname)
+                .withPort(port)
                 .withObjectMapper(jackson.build())
                 .withPath("/is-api-web/login/signout.json")
                 .withParams(Collections.singletonMap("id", accessTokenId))
-                .withPort(port)
                 .get();
     }
 }

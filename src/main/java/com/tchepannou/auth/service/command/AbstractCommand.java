@@ -1,7 +1,5 @@
 package com.tchepannou.auth.service.command;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 import com.google.common.base.Strings;
 import com.tchepannou.auth.client.v1.AccessTokenResponse;
 import com.tchepannou.auth.client.v1.AuthConstants;
@@ -10,7 +8,6 @@ import com.tchepannou.auth.service.Command;
 import com.tchepannou.auth.service.CommandContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.annotation.Resource;
@@ -20,9 +17,6 @@ public abstract class AbstractCommand<I, O> implements Command<I, O> {
     //-- Attributes
     private Logger logger;  // NOSONAR
 
-    @Autowired
-    private MetricRegistry metrics;
-
     @Resource
     private JmsTemplate jmsTemplate;
 
@@ -31,17 +25,14 @@ public abstract class AbstractCommand<I, O> implements Command<I, O> {
         this.logger = LoggerFactory.getLogger(getClass());
     }
 
-    protected AbstractCommand(MetricRegistry metrics, JmsTemplate jmsTemplate){
+    protected AbstractCommand(JmsTemplate jmsTemplate){
         this();
 
-        this.metrics = metrics;
         this.jmsTemplate = jmsTemplate;
     }
 
     //-- Abstract
     protected abstract O doExecute (I request, CommandContext context) throws IOException;
-
-    protected abstract String getMetricName ();
 
     protected abstract String getEventName();
 
@@ -49,32 +40,15 @@ public abstract class AbstractCommand<I, O> implements Command<I, O> {
     //-- Command Override
     @Override
     public O execute(I request, CommandContext context) throws IOException {
-        final String metricName = getMetricName();
-        final Timer.Context timer = metrics.timer(metricName + "-duration").time();
-        try {
-            metrics.meter(metricName).mark();
+        /* execute */
+        O response = doExecute(request, context);
 
-            /* execute */
-            O response = doExecute(request, context);
-
-            /* post */
-            logEvent(response, context);
-            return response;
-        } catch (RuntimeException e) {
-            metrics.meter(metricName + "-errors").mark();
-
-            throw e;
-        } finally {
-            timer.stop();
-        }
+        /* post */
+        logEvent(response, context);
+        return response;
     }
 
     //-- Protected
-    protected Logger getLogger () {
-        return logger;
-    }
-
-
     protected void logEvent (O response, CommandContext context) {
         String name = getEventName();
         if (Strings.isNullOrEmpty(name)){

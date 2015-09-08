@@ -19,11 +19,6 @@ public class LogoutCommandImpl extends AbstractCommand<Void, Void> implements Lo
     }
 
     @Override
-    protected String getMetricName() {
-        return AuthConstants.METRIC_LOGOUT;
-    }
-
-    @Override
     protected String getEventName() {
         return AuthConstants.EVENT_LOGOUT;
     }

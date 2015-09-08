@@ -23,12 +23,7 @@ public class LoginCommandImpl extends AbstractCommand<LoginRequest, AccessTokenR
     }
 
     @Override
-    protected String getMetricName() {
-        return AuthConstants.EVENT_LOGIN;
-    }
-
-    @Override
     protected String getEventName() {
-        return AuthConstants.METRIC_LOGIN;
+        return AuthConstants.EVENT_LOGIN;
     }
 }

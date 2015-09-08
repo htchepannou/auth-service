@@ -29,9 +29,9 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-@Api(basePath = "/v1/auth", value = "Login/Logout", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(basePath = "/v1/auth", value = "Login", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequestMapping(value="/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
-public class AuthenticationController extends AbstractController {
+public class AuthenticationController extends AbstractController{
     @Autowired
     private LoginCommand loginCommand;
 
